@@ -57,15 +57,28 @@ router.post("/login", async (req, res, next)=>{
   }
 })
 
-router.get("/topsecret", (req, res, next)=>{
+router.get("/topsecret", ensureLoggedIn, (req, res, next)=>{
   try {
-    const token = req.body._token;
 
-    const payload = jwt.verify(token, SECRET_KEY);
     return res.json({msg: "Signed In!"});
   } catch (err) {
     return next(err);
   }
 })
 
+router.get("/private", ensureLoggedIn, (req, res, next)=>{
+  try {
+    return res.json({msg:"Welcome to my VIP section!", user:`${req.user.username}`});
+  } catch (err) {
+    return next(err);
+  }
+})
+
+router.get("/adminhome", ensureAdmin, (req, res, next)=>{
+  try {
+    return res.json({msg:"Welcome, Admin", user:`${req.user.username}`});
+  } catch (err) {
+    return next(err);
+  }
+})
 module.exports = router;
